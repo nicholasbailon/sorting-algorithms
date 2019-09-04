@@ -1,6 +1,18 @@
 let index = 0;
+const algoInfo = [
+  {
+    name: "Quick Sort",
+    description:
+      "Quick sort is an efficient divide and conquer sorting algorithm. Average case time complexity of Quick Sort is O(nlog(n)) with worst case time complexity being O(n^2). The steps involved in Quick Sort are: Choose an element to serve as a pivot, in this case, the last element of the array is the pivot. Partitioning: Sort the array in such a manner that all elements less than the pivot are to the left, and all elements greater than the pivot are to the right. Call Quicksort recursively, taking into account the previous pivot to properly subdivide the left and right arrays.",
+    timeComplexity: "Time complexity: O(nlog(n))"
+  }
+];
 
-function quickSort(arr, start, end, steps, indexP) {
+export function getQuickSortInfo() {
+  return algoInfo;
+}
+
+export function quickSort(arr, start, end, steps, indexP) {
   index = indexP;
   sortHelper(arr, start, end, steps);
 }
@@ -57,5 +69,3 @@ function swap(arr, firstIndex, secondIndex, steps) {
     index++;
   }
 }
-
-export default quickSort;
