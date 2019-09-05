@@ -13,7 +13,7 @@ const helpInfo = [
   {
     name: "Quick guide",
     description:
-      "Pick a sorting algorithm and see how it works. You can change the size to visualize the algorithm with more/less data. Shuffle rearrages the data.",
+      "Pick a sorting algorithm and see how it works. You can change the size to visualize the algorithm with more/less data. Shuffle rearrages the data. You can change the speed so the algorithm goes slower/faster.",
     timeComplexity: "Have fun!"
   }
 ];
@@ -27,6 +27,7 @@ class App extends Component {
     super(props);
     this.sort = this.sort.bind(this);
     this.changeDataSize = this.changeDataSize.bind(this);
+    this.changeSpeed = this.changeSpeed.bind(this);
     this.state = {
       progressBar: 0,
       algoName: helpInfo[0].name,
@@ -41,6 +42,10 @@ class App extends Component {
 
   changeDataSize(eventKey) {
     this.refs.sortingChartRef.ChangeDataSize(eventKey);
+  }
+
+  changeSpeed(eventKey) {
+    this.refs.sortingChartRef.ChangeSpeed(eventKey);
   }
 
   sort(eventKey) {
@@ -82,11 +87,24 @@ class App extends Component {
                 <DropdownButton
                   id="dropdown-basic-button"
                   title="Data size"
+                  variant="outline-primary"
                   onSelect={this.changeDataSize}
                 >
                   <Dropdown.Item eventKey="1">Small</Dropdown.Item>
                   <Dropdown.Item eventKey="2">Medium</Dropdown.Item>
                   <Dropdown.Item eventKey="3">Large</Dropdown.Item>
+                </DropdownButton>
+              </Col>
+              <Col>
+                <DropdownButton
+                  id="dropdown-basic-button"
+                  title="Speed"
+                  variant="outline-primary"
+                  onSelect={this.changeSpeed}
+                >
+                  <Dropdown.Item eventKey="1">Normal</Dropdown.Item>
+                  <Dropdown.Item eventKey="2">Fast</Dropdown.Item>
+                  <Dropdown.Item eventKey="3">Flash</Dropdown.Item>
                 </DropdownButton>
               </Col>
               <Col>
@@ -110,8 +128,10 @@ class App extends Component {
           <Container>
             <Row>
               <Col>
-                <div className="card bg-light mb-3">
-                  <h4 className="card-header">{this.state.algoName}</h4>
+                <div className="card  mb-3 border-primary">
+                  <h4 className="card-header bg-light">
+                    {this.state.algoName}
+                  </h4>
                   <div className="card-body">
                     <p className="card-text">{this.state.algoDescription}</p>
                     <hr />

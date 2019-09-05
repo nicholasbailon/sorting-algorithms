@@ -57,6 +57,7 @@ let dataSorting = [];
 let labels = [];
 let steps = [[]];
 let index = 0;
+let speed = 1000;
 
 class SortingChart extends Component {
   constructor(props) {
@@ -104,6 +105,23 @@ class SortingChart extends Component {
     this.RandomizeChartData(true);
   };
 
+  ChangeSpeed = speedType => {
+    switch (speedType) {
+      case "1":
+        speed = 1000;
+
+        break;
+      case "2":
+        speed = 500;
+        break;
+      case "3":
+        speed = 250;
+        break;
+      default:
+        break;
+    }
+  };
+
   Sort = sortType => {
     index = 0;
     steps = [[]];
@@ -126,8 +144,10 @@ class SortingChart extends Component {
         index
       );
       this.props.algorithmInfoCallback(getBubbleSortInfo());
+    } else if (sortType === "mergesort") {
+      //this.props.algorithmInfoCallback(getMergeSortInfo());
     }
-    this.showSteps();
+    if (steps.length > 1) this.showSteps();
   };
 
   showSteps = () => {
@@ -143,7 +163,7 @@ class SortingChart extends Component {
         }, 1000);
         clearInterval(intervalId);
       }
-      console.log(steps[i]);
+      //console.log(steps[i]);
       self.props.progressBarCallback((i * 100) / (steps.length - 1));
       self.chartReference.chartInstance.data.datasets[0].data = steps[i];
 
@@ -158,7 +178,7 @@ class SortingChart extends Component {
 
       self.chartReference.chartInstance.update();
       i++;
-    }, 1000);
+    }, speed);
   };
 
   // this function randomizes the elements in the array using a modern implementation of
