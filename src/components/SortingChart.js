@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Bar } from "react-chartjs-2";
 //import { quickSort, getQuickSortInfo } from "./QuickSort";
-import { quickSort, getQuickSortInfo } from "./QuickSort2";
+import { quickSort, getQuickSortInfo } from "./QuickSort";
 import { bubbleSort, getBubbleSortInfo } from "./BubbleSort";
 
 const dataSorting_01 = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10];
@@ -137,25 +137,34 @@ class SortingChart extends Component {
       this.chartReference.chartInstance.data.datasets[0].data
     );
     if (sortType === "quicksort") {
+      this.props.algorithmInfoCallback(getQuickSortInfo());
       var tempArray = this.chartReference.chartInstance.data.datasets[0].data.slice();
       quickSort(
         tempArray,
         0,
         this.chartReference.chartInstance.data.datasets[0].data.length - 1,
-        algoSteps
+        this.updateChart,
+        speed
       );
-      this.props.algorithmInfoCallback(getQuickSortInfo());
     } else if (sortType === "bubblesort") {
       bubbleSort(
         this.chartReference.chartInstance.data.datasets[0].data,
-        steps,
-        index
+        this.updateChart,
+        speed
       );
       this.props.algorithmInfoCallback(getBubbleSortInfo());
     } else if (sortType === "mergesort") {
       //this.props.algorithmInfoCallback(getMergeSortInfo());
     }
     if (algoSteps[0].values.length > 1) this.showSteps();
+  };
+
+  updateChart = (data, colors, text) => {
+    this.chartReference.chartInstance.options.animation.duration = 0;
+    this.chartReference.chartInstance.data.datasets[0].backgroundColor = colors;
+    this.chartReference.chartInstance.data.datasets[0].data = data;
+    this.props.algorithmStepByStep(text);
+    this.chartReference.chartInstance.update();
   };
 
   showSteps = () => {

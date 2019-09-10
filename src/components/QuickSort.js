@@ -1,4 +1,5 @@
-let index = 0;
+let speed = 0;
+
 const algoInfo = [
   {
     name: "Quick Sort",
@@ -25,89 +26,102 @@ function setColorsToNormal(size) {
   return array;
 }
 
-export function quickSort(arr, start, end, algoSteps) {
-  index = -1;
-  /*algoSteps[0].values[index] = arr.slice();
-  algoSteps[0].colors[index] = setColorsToNormal(arr.size);
-  index++;*/
-  sortHelper(arr, start, end, algoSteps);
-}
+/* This function takes last element as pivot, 
+       places the pivot element at its correct 
+       position in sorted array, and places all 
+       smaller (smaller than pivot) to left of 
+       pivot and all greater elements to right 
+       of pivot */
+async function partition(arr, low, high, callbackUpdateChart) {
+  const pivot = arr[high];
+  let colors = setColorsToNormal(arr.length);
+  colors[high] = pivotColor;
+  callbackUpdateChart(arr.slice(), colors, "Select the pivot");
+  await wait(speed);
 
-function sortHelper(arr, start, end, algoSteps) {
-  if (start < end) {
-    // You can learn about how the pivot value is derived in the comments below
-    let pivot = partition(arr, start, end, algoSteps);
-
-    // Make sure to read the below comments to understand why pivot - 1 and pivot + 1 are used
-    // These are the recursive calls to quickSort
-    sortHelper(arr, start, pivot - 1, algoSteps);
-    sortHelper(arr, pivot + 1, end, algoSteps);
-  }
-}
-
-function partition(arr, start, end, algoSteps) {
-  let pivot = end;
-  // Set i to start - 1 so that it can access the first index in the event that the value at arr[0] is greater than arr[pivot]
-  // Succeeding comments will expound upon the above comment
-  let i = start - 1;
-  let j = start;
-  algoSteps[0].values[++index] = arr.slice();
-  algoSteps[0].colors[index] = setColorsToNormal(arr.length);
-  algoSteps[0].colors[index][j] = processingColor;
-  algoSteps[0].colors[index][pivot] = pivotColor;
-
-  // Increment j up to the index preceding the pivot
-  while (j < pivot) {
-    // If the value is greater than the pivot increment j
-    if (arr[j] > arr[pivot]) {
-      j++;
-      algoSteps[0].values[++index] = arr.slice();
-      algoSteps[0].colors[index] = setColorsToNormal(arr.length);
-      algoSteps[0].colors[index][j] = processingColor;
-      algoSteps[0].colors[index][pivot] = pivotColor;
-    }
-
-    // When the value at arr[j] is less than the pivot:
-    // increment i (arr[i] will be a value greater than arr[pivot]) and swap the value at arr[i] and arr[j]
-    else {
+  let i = low - 1; // index of smaller element
+  for (let j = low; j < high; j++) {
+    colors = setColorsToNormal(arr.length);
+    colors[high] = pivotColor;
+    colors[i] = processingColor;
+    colors[j] = processingColor;
+    callbackUpdateChart(
+      arr.slice(),
+      colors,
+      "Processing range: indexes[" + i + ", " + j + "]"
+    );
+    await wait(speed);
+    // If current element is smaller than the pivot
+    if (arr[j] < pivot) {
       i++;
-      algoSteps[0].values[++index] = arr.slice();
-      algoSteps[0].colors[index] = setColorsToNormal(arr.length);
-      algoSteps[0].colors[index][j] = processingColor;
-      algoSteps[0].colors[index][i] = processingColor;
-      algoSteps[0].colors[index][pivot] = pivotColor;
-      swap(arr, j, i);
-      if (j !== i) {
-        algoSteps[0].values[++index] = arr.slice();
-        algoSteps[0].colors[index] = setColorsToNormal(arr.length);
-        algoSteps[0].colors[index][j] = swapColor;
-        algoSteps[0].colors[index][i] = swapColor;
-        algoSteps[0].colors[index][pivot] = pivotColor;
-      }
-      j++;
-      algoSteps[0].values[++index] = arr.slice();
-      algoSteps[0].colors[index] = setColorsToNormal(arr.length);
-      algoSteps[0].colors[index][j] = processingColor;
-      algoSteps[0].colors[index][pivot] = pivotColor;
+
+      colors = setColorsToNormal(arr.length);
+      colors[high] = pivotColor;
+      colors[i] = processingColor;
+      colors[j] = processingColor;
+      callbackUpdateChart(arr.slice(), colors, "Step right and compare");
+      await wait(speed);
+
+      // swap arr[i] and arr[j]
+      let temp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = temp;
+
+      colors = setColorsToNormal(arr.length);
+      colors[high] = pivotColor;
+      colors[i] = swapColor;
+      colors[j] = swapColor;
+      callbackUpdateChart(arr.slice(), colors, "Swap");
+      await wait(speed);
     }
   }
 
-  //The value at arr[i + 1] will be greater than the value of arr[pivot]
-  swap(arr, i + 1, pivot);
-  if (i + 1 !== pivot) {
-    algoSteps[0].values[++index] = arr.slice();
-    algoSteps[0].colors[index] = setColorsToNormal(arr.length);
-    algoSteps[0].colors[index][i + 1] = swapColor;
-    algoSteps[0].colors[index][pivot] = swapColor;
-  }
+  colors = setColorsToNormal(arr.length);
+  colors[high] = pivotColor;
+  colors[i + 1] = processingColor;
+  colors[high] = processingColor;
+  callbackUpdateChart(arr.slice(), colors, "Step right and compare to pivot");
+  await wait(speed);
 
-  //You return i + 1, as the values to the left of it are less than arr[i+1], and values to the right are greater than arr[i + 1]
-  // As such, when the recursive quicksorts are called, the new sub arrays will not include this the previously used pivot value
+  let temp = arr[i + 1];
+  arr[i + 1] = arr[high];
+  arr[high] = temp;
+
+  colors = setColorsToNormal(arr.length);
+  colors[high] = pivotColor;
+  colors[i + 1] = swapColor;
+  colors[high] = swapColor;
+  callbackUpdateChart(arr.slice(), colors, "Swap with pivot");
+  await wait(speed);
+
   return i + 1;
 }
 
-function swap(arr, firstIndex, secondIndex) {
-  let temp = arr[firstIndex];
-  arr[firstIndex] = arr[secondIndex];
-  arr[secondIndex] = temp;
+/* The main function that implements QuickSort() 
+      arr[] --> Array to be sorted, 
+      low  --> Starting index, 
+      high  --> Ending index */
+async function sort(arr, low, high, callbackUpdateChart) {
+  if (low < high) {
+    /* pi is partitioning index, arr[pi] is  
+              now at right place */
+    let pi = await partition(arr, low, high, callbackUpdateChart);
+
+    // Recursively sort elements before
+    // partition and after partition
+    await sort(arr, low, pi - 1, callbackUpdateChart);
+    await sort(arr, pi + 1, high, callbackUpdateChart);
+  }
+}
+
+export async function quickSort(arr, low, high, callbackUpdateChart, speedP) {
+  speed = speedP;
+  await sort(arr, low, high, callbackUpdateChart);
+  callbackUpdateChart(arr.slice(), setColorsToNormal(arr.length), "Finished");
+}
+
+async function wait(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
 }
