@@ -64,6 +64,12 @@ class App extends Component {
     });
   };
 
+  updateAlgorithmStepByStep = text => {
+    this.setState({
+      algoDescription: text
+    });
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -74,6 +80,7 @@ class App extends Component {
               ref="sortingChartRef"
               progressBarCallback={this.updateProgressBar}
               algorithmInfoCallback={this.updateAlgorithmInfo}
+              algorithmStepByStep={this.updateAlgorithmStepByStep}
             />
           </Container>
           <Container className="mb-4">

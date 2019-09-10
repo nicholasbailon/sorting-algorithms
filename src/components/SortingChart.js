@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Bar } from "react-chartjs-2";
-import { quickSort, getQuickSortInfo } from "./QuickSort";
+//import { quickSort, getQuickSortInfo } from "./QuickSort";
+import { quickSort, getQuickSortInfo } from "./QuickSort2";
 import { bubbleSort, getBubbleSortInfo } from "./BubbleSort";
 
 const dataSorting_01 = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10];
@@ -50,9 +51,16 @@ const labels_02 = [
   ""
 ];
 const normalColor = "rgba(75, 192, 192, 0.6)";
-const changedColor = "rgba(192, 75, 192, 0.6)";
+//const changedColor = "rgba(192, 75, 192, 0.6)";
 const animationDuration = 1000;
 
+let algoSteps = [
+  {
+    values: [[]],
+    colors: [[]],
+    texts: []
+  }
+];
 let dataSorting = [];
 let labels = [];
 let steps = [[]];
@@ -129,12 +137,12 @@ class SortingChart extends Component {
       this.chartReference.chartInstance.data.datasets[0].data
     );
     if (sortType === "quicksort") {
+      var tempArray = this.chartReference.chartInstance.data.datasets[0].data.slice();
       quickSort(
-        this.chartReference.chartInstance.data.datasets[0].data,
+        tempArray,
         0,
         this.chartReference.chartInstance.data.datasets[0].data.length - 1,
-        steps,
-        index
+        algoSteps
       );
       this.props.algorithmInfoCallback(getQuickSortInfo());
     } else if (sortType === "bubblesort") {
@@ -147,15 +155,16 @@ class SortingChart extends Component {
     } else if (sortType === "mergesort") {
       //this.props.algorithmInfoCallback(getMergeSortInfo());
     }
-    if (steps.length > 1) this.showSteps();
+    if (algoSteps[0].values.length > 1) this.showSteps();
   };
 
   showSteps = () => {
-    var i = 1;
+    var i = 0;
     var self = this;
     this.chartReference.chartInstance.options.animation.duration = 0;
     var intervalId = setInterval(function() {
-      if (i === steps.length - 1) {
+      self.props.algorithmStepByStep(algoSteps[0].texts[i]);
+      if (i === algoSteps[0].values.length - 1) {
         setTimeout(function() {
           self.chartReference.chartInstance.data.datasets[0].backgroundColor = normalColor;
           self.chartReference.chartInstance.update();
@@ -164,18 +173,13 @@ class SortingChart extends Component {
         clearInterval(intervalId);
       }
       //console.log(steps[i]);
-      self.props.progressBarCallback((i * 100) / (steps.length - 1));
-      self.chartReference.chartInstance.data.datasets[0].data = steps[i];
-
-      if (i - 1 >= 0) {
-        let colors = [steps.length];
-        for (let y = 0; y < steps[i].length; y++) {
-          colors[y] =
-            steps[i - 1][y] === steps[i][y] ? normalColor : changedColor;
-        }
-        self.chartReference.chartInstance.data.datasets[0].backgroundColor = colors;
-      }
-
+      self.props.progressBarCallback(
+        (i * 100) / (algoSteps[0].values.length - 1)
+      );
+      self.chartReference.chartInstance.data.datasets[0].backgroundColor =
+        algoSteps[0].colors[i];
+      self.chartReference.chartInstance.data.datasets[0].data =
+        algoSteps[0].values[i];
       self.chartReference.chartInstance.update();
       i++;
     }, speed);
