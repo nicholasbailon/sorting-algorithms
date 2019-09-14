@@ -3,6 +3,7 @@ import { Bar } from "react-chartjs-2";
 //import { quickSort, getQuickSortInfo } from "./QuickSort";
 import { quickSort, getQuickSortInfo } from "./QuickSort";
 import { bubbleSort, getBubbleSortInfo } from "./BubbleSort";
+import { mergeSort, getMergeSortInfo } from "./MergeSort";
 
 const dataSorting_01 = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10];
 const dataSorting_02 = [
@@ -138,9 +139,8 @@ class SortingChart extends Component {
     );
     if (sortType === "quicksort") {
       this.props.algorithmInfoCallback(getQuickSortInfo());
-      var tempArray = this.chartReference.chartInstance.data.datasets[0].data.slice();
       quickSort(
-        tempArray,
+        this.chartReference.chartInstance.data.datasets[0].data,
         0,
         this.chartReference.chartInstance.data.datasets[0].data.length - 1,
         this.updateChart,
@@ -154,7 +154,12 @@ class SortingChart extends Component {
       );
       this.props.algorithmInfoCallback(getBubbleSortInfo());
     } else if (sortType === "mergesort") {
-      //this.props.algorithmInfoCallback(getMergeSortInfo());
+      mergeSort(
+        this.chartReference.chartInstance.data.datasets[0].data,
+        this.chartReference.chartInstance.data.datasets[0].data.length,
+        this.updateChart,
+        speed
+      );
     }
     if (algoSteps[0].values.length > 1) this.showSteps();
   };
